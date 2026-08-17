@@ -109,7 +109,7 @@ export const GradeEntryRow: React.FC<GradeEntryRowProps> = memo(({
       {/* Attendance Col 0 */}
       <td className="py-2.5 px-3">
         {isNotJoined ? (
-          <div className="px-2 py-1 bg-slate-200/70 dark:bg-slate-800/80 text-slate-500 rounded-xl text-center text-xs font-bold border border-slate-300/50 dark:border-slate-700">
+          <div className="px-2 py-1 bg-slate-200/70 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 rounded-xl text-center text-xs font-bold border border-slate-300/50 dark:border-slate-700">
             {isBeforeJoin ? 'Chưa gia nhập' : 'Đã rút lớp'}
           </div>
         ) : (
@@ -121,14 +121,14 @@ export const GradeEntryRow: React.FC<GradeEntryRowProps> = memo(({
             onChange={(e) =>
               onUpdateSession(student.id!, 'attendance', e.target.value as AttendanceStatus)
             }
-            className={`w-full px-2.5 py-1.5 rounded-xl border text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+            className={`w-full px-2.5 py-1.5 rounded-xl border text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer ${
               rec.attendance === 'present'
-                ? 'bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                ? 'bg-emerald-50 border-emerald-300 text-emerald-800 dark:bg-emerald-950/80 dark:border-emerald-700 dark:text-emerald-200'
                 : rec.attendance === 'absent_excused'
-                ? 'bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                ? 'bg-amber-50 border-amber-300 text-amber-900 dark:bg-amber-950/80 dark:border-amber-700 dark:text-amber-200'
                 : rec.attendance === 'absent_unexcused'
-                ? 'bg-rose-50 border-rose-200 text-rose-800 dark:bg-rose-950 dark:text-rose-300 font-extrabold'
-                : 'bg-sky-50 border-sky-200 text-sky-800 dark:bg-sky-950 dark:text-sky-300'
+                ? 'bg-rose-50 border-rose-300 text-rose-900 dark:bg-rose-950/80 dark:border-rose-700 dark:text-rose-200 font-extrabold'
+                : 'bg-sky-50 border-sky-300 text-sky-900 dark:bg-sky-950/80 dark:border-sky-700 dark:text-sky-200'
             }`}
           >
             <option value="present">Có mặt</option>
@@ -173,16 +173,16 @@ export const GradeEntryRow: React.FC<GradeEntryRowProps> = memo(({
                 onUpdateSession(student.id!, 'homework_submitted', e.target.value !== '');
               }}
               disabled={isNotJoined || isAbsent || !!rec.late_submit || rec.exempt || rec.exempt_homework}
-              className={`w-20 px-2 py-1.5 text-center border rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-60 ${
+              className={`w-20 px-2 py-1.5 text-center font-num border rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-60 transition-all ${
                 rec.exempt || rec.exempt_homework
-                  ? 'bg-sky-50 border-sky-300 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 font-extrabold'
+                  ? 'bg-sky-50 border-sky-300 text-sky-800 dark:bg-sky-950/70 dark:border-sky-800 dark:text-sky-200 font-extrabold'
                   : rec.late_submit
-                  ? 'bg-amber-50 border-amber-300 text-amber-800 dark:bg-amber-950 dark:text-amber-200'
+                  ? 'bg-amber-50 border-amber-300 text-amber-900 dark:bg-amber-950/70 dark:border-amber-800 dark:text-amber-200'
                   : !rec.homework_submitted && !isAbsent
-                  ? 'bg-rose-50 border-rose-300 text-rose-800 dark:bg-rose-950 dark:text-rose-200'
+                  ? 'bg-rose-50 border-rose-300 text-rose-900 dark:bg-rose-950/70 dark:border-rose-800 dark:text-rose-200 font-bold'
                   : rec.homework_score !== undefined && rec.homework_score < 5 && !isAbsent
-                  ? 'bg-amber-50 border-amber-300 text-amber-800 dark:bg-amber-950 dark:text-amber-200'
-                  : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100'
+                  ? 'bg-amber-50 border-amber-300 text-amber-900 dark:bg-amber-950/70 dark:border-amber-800 dark:text-amber-200 font-bold'
+                  : 'bg-white dark:bg-slate-800/90 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100'
               }`}
             />
             <div className="flex items-center gap-1.5 flex-wrap justify-center">
@@ -275,14 +275,14 @@ export const GradeEntryRow: React.FC<GradeEntryRowProps> = memo(({
                 onUpdateSession(student.id!, 'test_score', val);
               }}
               disabled={isNotJoined || isAbsent || rec.exempt || rec.exempt_test}
-              className={`w-20 px-2 py-1.5 text-center border rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-60 ${
+              className={`w-20 px-2 py-1.5 text-center font-num border rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-60 transition-all ${
                 rec.exempt || rec.exempt_test
-                  ? 'bg-sky-50 border-sky-300 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 font-extrabold'
+                  ? 'bg-sky-50 border-sky-300 text-sky-800 dark:bg-sky-950/70 dark:border-sky-800 dark:text-sky-200 font-extrabold'
                   : rec.test_score !== undefined && rec.test_score !== null && rec.test_score < 5 && !isAbsent
-                  ? 'bg-rose-50 border-rose-300 text-rose-700 dark:bg-rose-950 dark:text-rose-300 font-black'
+                  ? 'bg-rose-50 border-rose-300 text-rose-900 dark:bg-rose-950/70 dark:border-rose-800 dark:text-rose-200 font-black'
                   : (rec.test_score === undefined || rec.test_score === null) && !isAbsent
-                  ? 'bg-purple-50/70 border-purple-200/80 text-purple-700 dark:bg-purple-950/40 dark:border-purple-800 placeholder:text-purple-400 dark:placeholder:text-purple-500 font-medium'
-                  : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100'
+                  ? 'bg-purple-50/90 border-purple-300 text-purple-900 dark:bg-purple-950/50 dark:border-purple-800 dark:text-purple-200 placeholder:text-purple-500 font-medium'
+                  : 'bg-white dark:bg-slate-800/90 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100'
               }`}
             />
             <div className="flex items-center gap-1.5 flex-wrap justify-center">

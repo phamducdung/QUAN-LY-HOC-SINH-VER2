@@ -1298,13 +1298,13 @@ Trân trọng cảm ơn PH!`;
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span
-                          className={`px-2.5 py-0.5 rounded text-[10px] font-extrabold ${
+                          className={`px-2.5 py-0.5 rounded text-[10px] font-extrabold shadow-2xs ${
                             w.priority === 'P1'
                               ? 'bg-rose-600 text-white'
                               : w.priority === 'P2'
                               ? 'bg-amber-600 text-white'
                               : w.priority === 'P3'
-                              ? 'bg-yellow-500 text-slate-900 font-black'
+                              ? 'bg-yellow-400 text-slate-950 font-black'
                               : 'bg-emerald-600 text-white'
                           }`}
                         >
@@ -1321,14 +1321,14 @@ Trân trọng cảm ơn PH!`;
                           {st?.full_name || 'Học sinh'}
                         </h3>
 
-                        <span className="text-xs text-slate-500">
+                        <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                           (Lớp {cls?.class_name || 'Toán'})
                         </span>
                       </div>
 
                       <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">
                         Loại cảnh báo:{' '}
-                        <span className="text-rose-600 dark:text-rose-400 font-bold">{w.warning_type}</span>
+                        <span className="text-rose-700 dark:text-rose-400 font-bold">{w.warning_type}</span>
                       </p>
                       {(() => {
                         const parts = (w.reason || '').split('[CHI TIẾT LỖ HỔNG TRUY VẾT]:');
@@ -1337,15 +1337,15 @@ Trân trọng cảm ơn PH!`;
 
                         return (
                           <div className="space-y-1 mt-0.5">
-                            <p className="text-xs text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
+                            <p className="text-xs text-slate-700 dark:text-slate-200 font-medium leading-relaxed">
                               {mainReason}
                             </p>
                             {traceDetails && (
-                              <details className="text-[11px] text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-950 p-2 rounded-lg border border-slate-200/80 dark:border-slate-800">
-                                <summary className="font-bold text-indigo-600 dark:text-indigo-400 cursor-pointer hover:underline select-none">
+                              <details className="text-[11px] text-slate-600 dark:text-slate-300 bg-white/80 dark:bg-slate-950 p-2.5 rounded-lg border border-slate-200/80 dark:border-slate-800">
+                                <summary className="font-bold text-indigo-700 dark:text-indigo-400 cursor-pointer hover:underline select-none">
                                   🔍 Xem chi tiết truy vết các buổi học & điểm số ({Math.max(1, traceDetails.split('• Bài:').length - 1)} buổi)
                                 </summary>
-                                <pre className="mt-1.5 whitespace-pre-wrap font-sans text-[11px] leading-snug text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 p-2 rounded border border-slate-100 dark:border-slate-800">
+                                <pre className="mt-1.5 whitespace-pre-wrap font-sans text-[11px] leading-snug text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-900 p-2 rounded border border-slate-100 dark:border-slate-800">
                                   {traceDetails}
                                 </pre>
                               </details>
@@ -1354,16 +1354,16 @@ Trân trọng cảm ơn PH!`;
                         );
                       })()}
 
-                      <div className="flex items-center gap-3 text-[11px] text-slate-400 pt-1">
+                      <div className="flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400 pt-1">
                         <span>
-                          SĐT Phụ huynh: <strong className="text-slate-700 dark:text-slate-200">{st?.parent_phone || 'N/A'}</strong>
+                          SĐT Phụ huynh: <strong className="font-num text-slate-800 dark:text-slate-200 font-bold">{st?.parent_phone || 'N/A'}</strong>
                         </span>
                         <span>• Ngày tạo: {new Date(w.created_at).toLocaleDateString('vi-VN')}</span>
                       </div>
 
                       {w.resolved && (
-                        <div className="mt-2 p-2 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/80 rounded-xl text-xs font-semibold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <div className="mt-2 p-2 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-800 rounded-xl text-xs font-semibold text-emerald-900 dark:text-emerald-200 flex items-center gap-1.5">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                           <span>Đã xử lý: {w.resolved_action}</span>
                         </div>
                       )}

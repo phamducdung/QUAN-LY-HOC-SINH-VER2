@@ -71,14 +71,14 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Center: Search Bar */}
         <div className="relative w-full md:max-w-xs">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 pointer-events-none" />
           <input
             id="global-search-input"
             type="text"
             placeholder="Tìm tên học sinh, lớp, SĐT..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 pl-9 pr-3 py-2 rounded-xl border border-transparent focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-900 transition-all outline-none"
+            className="w-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400 pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 focus:border-emerald-600 dark:focus:border-emerald-400 focus:bg-white dark:focus:bg-slate-900 transition-all outline-none"
           />
         </div>
 

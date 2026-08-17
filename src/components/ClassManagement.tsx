@@ -858,7 +858,7 @@ export const ClassManagement: React.FC<ClassManagementProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-200"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-colors cursor-pointer"
                 >
                   Hủy
                 </button>
@@ -903,7 +903,7 @@ export const ClassManagement: React.FC<ClassManagementProps> = ({
             <div className="flex items-center justify-end gap-2">
               <button
                 onClick={() => setDeletingClass(null)}
-                className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-colors cursor-pointer"
               >
                 Hủy bỏ
               </button>
@@ -968,7 +968,7 @@ export const ClassManagement: React.FC<ClassManagementProps> = ({
             <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
               <button
                 onClick={() => setPromotingClass(null)}
-                className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-colors cursor-pointer"
               >
                 Hủy
               </button>

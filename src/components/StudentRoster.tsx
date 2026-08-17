@@ -742,10 +742,10 @@ export const StudentRoster: React.FC<StudentRosterProps> = ({
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] font-extrabold ${
                         st.status === 'studying'
-                          ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                          ? 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-800'
                           : st.status === 'paused'
-                          ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
-                          : 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
+                          ? 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200 border border-amber-300 dark:border-amber-800'
+                          : 'bg-rose-100 text-rose-900 dark:bg-rose-950 dark:text-rose-200 border border-rose-300 dark:border-rose-800'
                       }`}
                     >
                       {st.status === 'studying'
@@ -756,23 +756,23 @@ export const StudentRoster: React.FC<StudentRosterProps> = ({
                     </span>
                   </div>
 
-                  <div className="text-xs text-slate-600 dark:text-slate-300 space-y-1 my-3 bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-xl">
-                    <p>Phụ huynh: <strong>{st.parent_name}</strong></p>
-                    <p>SĐT Liên hệ: <strong className="text-emerald-600 dark:text-emerald-400">{st.parent_phone}</strong></p>
+                  <div className="text-xs text-slate-700 dark:text-slate-200 space-y-1.5 my-3 bg-slate-50 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-100 dark:border-slate-750">
+                    <p>Phụ huynh: <strong className="text-slate-900 dark:text-slate-100">{st.parent_name}</strong></p>
+                    <p>SĐT Liên hệ: <strong className="font-num text-emerald-700 dark:text-emerald-400 font-bold">{st.parent_phone}</strong></p>
                     <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                      <span className="text-slate-400">Lớp:</span>
+                      <span className="text-slate-500 dark:text-slate-400">Lớp:</span>
                       {(() => {
                         const enrolled = classStudents
                           .filter((cs) => cs.student_id === st.id)
                           .map((cs) => classes.find((c) => c.id === cs.class_id))
                           .filter((c): c is ClassItem => !!c);
                         if (enrolled.length === 0) {
-                          return <span className="text-rose-500 font-bold text-[10px]">Chưa xếp lớp</span>;
+                          return <span className="text-rose-600 dark:text-rose-400 font-bold text-[10px]">Chưa xếp lớp</span>;
                         }
                         return enrolled.map((c, cIdx) => (
                           <span
                             key={c.id ? `${c.id}-${cIdx}` : cIdx}
-                            className="px-2 py-0.5 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-900/40 rounded font-bold text-[10px]"
+                            className="px-2 py-0.5 bg-blue-50 dark:bg-blue-950/70 text-blue-800 dark:text-blue-200 border border-blue-200 dark:border-blue-800 rounded font-bold text-[10px]"
                           >
                             {c.class_name.split(' - ')[0]}
                           </span>
@@ -780,9 +780,9 @@ export const StudentRoster: React.FC<StudentRosterProps> = ({
                       })()}
                     </div>
                     {st.leave_reason && (
-                      <p className="text-rose-600 dark:text-rose-400 font-medium pt-0.5">Lý do nghỉ: {st.leave_reason}</p>
+                      <p className="text-rose-700 dark:text-rose-400 font-medium pt-0.5">Lý do nghỉ: {st.leave_reason}</p>
                     )}
-                    {st.note && <p className="text-slate-500 italic pt-0.5">Ghi chú: {st.note}</p>}
+                    {st.note && <p className="text-slate-500 dark:text-slate-400 italic pt-0.5">Ghi chú: {st.note}</p>}
                   </div>
                 </div>
 
@@ -1003,18 +1003,18 @@ export const StudentRoster: React.FC<StudentRosterProps> = ({
                 </div>
               )}
 
-              <div className="pt-3 border-t flex justify-end gap-2">
+              <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 bg-slate-100 rounded-xl text-xs font-bold"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-colors cursor-pointer"
                 >
                   Hủy
                 </button>
                 <button
                   type="submit"
                   disabled={!(fullName || '').trim()}
-                  className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm cursor-pointer"
                 >
                   Lưu Học Sinh
                 </button>

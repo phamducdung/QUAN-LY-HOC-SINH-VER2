@@ -76,13 +76,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, p1Coun
   return (
     <aside id="main-sidebar" className="w-full lg:w-64 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 p-4 flex flex-col justify-between shrink-0 border-r border-slate-200 dark:border-slate-800 transition-colors">
       <div>
-        <div className="px-3 py-2 mb-4">
-          <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+        <div className="px-3 py-2 mb-3">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             Menu Điều Hành
           </span>
         </div>
 
-        <nav className="space-y-1">
+        <nav className="space-y-1.5">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.key;
@@ -91,25 +91,29 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, p1Coun
                 key={item.key}
                 id={`nav-${item.key}`}
                 onClick={() => onTabChange(item.key)}
-                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800/80'
+                    ? 'bg-emerald-600 text-white font-bold shadow-md shadow-emerald-600/25 ring-1 ring-emerald-500'
+                    : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-50 hover:bg-slate-100 dark:hover:bg-slate-800'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`} />
-                  <span>{item.label}</span>
+                  <span className="tracking-tight">{item.label}</span>
                 </div>
 
                 {item.count !== undefined && item.count > 0 && (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500 text-white">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-600 text-white shadow-xs">
                     {item.count}
                   </span>
                 )}
 
                 {item.badge && !item.count && (
-                  <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 border border-emerald-500/30">
+                  <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold border ${
+                    isActive 
+                      ? 'bg-emerald-700/60 text-emerald-100 border-emerald-400/40' 
+                      : 'bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300 border-emerald-500/30'
+                  }`}>
                     {item.badge}
                   </span>
                 )}
