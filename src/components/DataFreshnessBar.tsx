@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { HardDrive, Clock, CheckCircle2, CloudLightning, RefreshCw, Radio } from 'lucide-react';
+import { HardDrive, Clock, CheckCircle2, CloudLightning, RefreshCw, Radio, CloudDownload } from 'lucide-react';
 import { useCloudSync } from '../hooks/useCloudSync';
 
 interface DataFreshnessBarProps {
@@ -16,7 +16,18 @@ export const DataFreshnessBar: React.FC<DataFreshnessBarProps> = ({
   entityName = 'bản ghi',
   onInspectCloud,
 }) => {
-  const { isOnline, isSyncing, lastSyncedAt } = useCloudSync();
+  const { isOnline, isSyncing, lastSyncedAt, fullSync } = useCloudSync();
+  const [isQuickSyncing, setIsQuickSyncing] = useState(false);
+
+  const handleQuickSync = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      setIsQuickSyncing(true);
+      await fullSync();
+    } finally {
+      setIsQuickSyncing(false);
+    }
+  };
 
   return (
     <div className="bg-white/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800 p-2.5 px-3.5 rounded-xl shadow-2xs flex flex-wrap items-center justify-between gap-3 text-xs">
@@ -50,18 +61,28 @@ export const DataFreshnessBar: React.FC<DataFreshnessBarProps> = ({
         )}
       </div>
 
-      <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-semibold text-[11px]">
-        {isSyncing ? (
-          <>
-            <RefreshCw className="w-4 h-4 animate-spin text-emerald-600" />
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={handleQuickSync}
+          disabled={isSyncing || isQuickSyncing}
+          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] transition-colors cursor-pointer disabled:opacity-50"
+          title="Đồng bộ tức thời 2 chiều giữa máy và Firebase mà không cần tải lại trang"
+        >
+          <RefreshCw className={`w-3 h-3 ${isSyncing || isQuickSyncing ? 'animate-spin' : ''}`} />
+          <span>{isSyncing || isQuickSyncing ? 'Đang đồng bộ...' : 'Đồng bộ Ngay'}</span>
+        </button>
+
+        <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-semibold text-[11px]">
+          {isSyncing || isQuickSyncing ? (
             <span>Đang truyền dữ liệu...</span>
-          </>
-        ) : (
-          <>
-            <CheckCircle2 className="w-4 h-4" />
-            <span>Sẵn sàng trên mọi thiết bị</span>
-          </>
-        )}
+          ) : (
+            <>
+              <CheckCircle2 className="w-4 h-4" />
+              <span>Sẵn sàng mọi thiết bị</span>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -9,6 +9,8 @@ import {
   CheckCircle2,
   Cloud,
   CloudLightning,
+  CloudDownload,
+  CloudUpload,
   RefreshCw,
   Wifi,
   WifiOff,
@@ -26,8 +28,9 @@ interface CloudSyncStatusModalProps {
 }
 
 export const CloudSyncStatusModal: React.FC<CloudSyncStatusModalProps> = ({ isOpen, onClose }) => {
-  const { isSyncing, isOnline, lastSyncedAt, syncErrors, syncStatus, pushToCloud } = useCloudSync();
+  const { isSyncing, isOnline, lastSyncedAt, syncErrors, syncStatus, pushToCloud, pullFromCloud, fullSync } = useCloudSync();
   const [isManualSyncing, setIsManualSyncing] = useState(false);
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
 
   // Live queries for local counts
   const classesCount = useLiveQuery(() => db.classes.count()) ?? 0;
@@ -45,12 +48,39 @@ export const CloudSyncStatusModal: React.FC<CloudSyncStatusModalProps> = ({ isOp
 
   if (!isOpen) return null;
 
-  const handleForceSync = async () => {
+  const handleFullSync = async () => {
     try {
       setIsManualSyncing(true);
-      await pushToCloud();
+      setActionMessage('Đang đồng bộ 2 chiều toàn diện...');
+      await fullSync();
+      setActionMessage('Đồng bộ 2 chiều hoàn tất! Mọi thay đổi đã được cập nhật.');
     } finally {
       setIsManualSyncing(false);
+      setTimeout(() => setActionMessage(null), 3500);
+    }
+  };
+
+  const handlePullOnly = async () => {
+    try {
+      setIsManualSyncing(true);
+      setActionMessage('Đang kéo dữ liệu mới nhất từ Đám mây...');
+      await pullFromCloud();
+      setActionMessage('Đã cập nhật dữ liệu từ Đám mây về máy!');
+    } finally {
+      setIsManualSyncing(false);
+      setTimeout(() => setActionMessage(null), 3500);
+    }
+  };
+
+  const handlePushOnly = async () => {
+    try {
+      setIsManualSyncing(true);
+      setActionMessage('Đang tải dữ liệu máy lên Đám mây...');
+      await pushToCloud();
+      setActionMessage('Đã tải dữ liệu lên Đám mây thành công!');
+    } finally {
+      setIsManualSyncing(false);
+      setTimeout(() => setActionMessage(null), 3500);
     }
   };
 
@@ -104,38 +134,70 @@ export const CloudSyncStatusModal: React.FC<CloudSyncStatusModalProps> = ({ isOp
         {/* Content */}
         <div className="p-6 overflow-y-auto space-y-5 flex-1">
           {/* Realtime Status Banner */}
-          <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-sky-500/10 border border-emerald-500/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className={`w-3 h-3 rounded-full ${isOnline ? 'bg-emerald-500 animate-ping' : 'bg-rose-500'}`} />
-              <div>
-                <div className="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                  {isOnline ? (
-                    <span className="flex items-center gap-1 text-emerald-700 dark:text-emerald-300">
-                      <Wifi className="w-3.5 h-3.5" /> Kết nối Đám mây Trực tuyến (Online)
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1 text-amber-700 dark:text-amber-300">
-                      <WifiOff className="w-3.5 h-3.5" /> Chế độ Ngoại tuyến (Offline-First)
-                    </span>
-                  )}
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-sky-500/10 border border-emerald-500/20 flex flex-col gap-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className={`w-3 h-3 rounded-full ${isOnline ? 'bg-emerald-500 animate-ping' : 'bg-rose-500'}`} />
+                <div>
+                  <div className="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                    {isOnline ? (
+                      <span className="flex items-center gap-1 text-emerald-700 dark:text-emerald-300">
+                        <Wifi className="w-3.5 h-3.5" /> Kết nối Đám mây Trực tuyến (Online)
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1 text-amber-700 dark:text-amber-300">
+                        <WifiOff className="w-3.5 h-3.5" /> Chế độ Ngoại tuyến (Offline-First)
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                    {lastSyncedAt
+                      ? `Lần đồng bộ gần nhất: ${new Date(lastSyncedAt).toLocaleTimeString('vi-VN')}`
+                      : 'Đang duy trì kết nối WebSocket thời gian thực'}
+                  </p>
                 </div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                  {lastSyncedAt
-                    ? `Lần đồng bộ gần nhất: ${new Date(lastSyncedAt).toLocaleTimeString('vi-VN')}`
-                    : 'Đang duy trì kết nối WebSocket thời gian thực'}
-                </p>
+              </div>
+
+              <div className="flex items-center flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={handleFullSync}
+                  disabled={isManualSyncing || isSyncing}
+                  className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                  title="Đồng bộ 2 chiều: Lấy dữ liệu mới nhất về máy và đẩy dữ liệu cục bộ lên Đám mây"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isManualSyncing || isSyncing ? 'animate-spin' : ''}`} />
+                  <span>{isManualSyncing || isSyncing ? 'Đang đồng bộ...' : 'Đồng bộ 2 Chiều'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handlePullOnly}
+                  disabled={isManualSyncing || isSyncing}
+                  className="px-3 py-1.5 rounded-xl bg-sky-100 dark:bg-sky-900/60 hover:bg-sky-200 dark:hover:bg-sky-800 text-sky-800 dark:text-sky-200 text-xs font-semibold transition-all flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                  title="Tải toàn bộ dữ liệu mới nhất từ Firestore về máy"
+                >
+                  <CloudDownload className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+                  <span>Kéo về</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handlePushOnly}
+                  disabled={isManualSyncing || isSyncing}
+                  className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-all flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                  title="Tải toàn bộ dữ liệu trên máy lên Firestore"
+                >
+                  <CloudUpload className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400" />
+                  <span>Đẩy lên</span>
+                </button>
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={handleForceSync}
-              disabled={isManualSyncing || isSyncing}
-              className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${isManualSyncing || isSyncing ? 'animate-spin' : ''}`} />
-              <span>{isManualSyncing || isSyncing ? 'Đang đồng bộ...' : 'Đồng bộ Ngay'}</span>
-            </button>
+            {(actionMessage || syncStatus) && (
+              <div className="text-xs font-medium px-3 py-1.5 rounded-lg bg-emerald-100/70 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5 animate-fadeIn">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                <span>{actionMessage || syncStatus}</span>
+              </div>
+            )}
           </div>
 
           {/* Summary Box */}

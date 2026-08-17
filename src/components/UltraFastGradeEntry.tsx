@@ -14,7 +14,7 @@ import {
   Legend,
 } from 'recharts';
 import { ClassItem, Session, Student, StudentSession, AttendanceStatus, KnowledgeTag } from '../types';
-import { db } from '../db/dexie';
+import { db, pushBatchDocsToFirestore } from '../db/dexie';
 import { sortStudentsByName } from '../utils/sortUtils';
 import { logAudit } from '../utils/auditLogger';
 import { exportSessionReportPDF } from '../utils/pdfGenerator';
@@ -219,12 +219,24 @@ export const UltraFastGradeEntry: React.FC<UltraFastGradeEntryProps> = ({
   const liveKnowledgeTags = useLiveQuery(() => db.knowledge_tags.toArray()) || [];
 
   const liveSessions = useLiveQuery(
-    () => (currentClass?.id ? db.sessions.where('class_id').equals(currentClass.id).sortBy('session_date') : []),
+    async () => {
+      if (!currentClass?.id) return [];
+      const classIdStr = String(currentClass.id);
+      const all = await db.sessions.toArray();
+      return all
+        .filter((s) => String(s.class_id) === classIdStr)
+        .sort((a, b) => (a.session_date || '').localeCompare(b.session_date || ''));
+    },
     [currentClass?.id]
   ) || [];
 
   const liveClassStudents = useLiveQuery(
-    () => (currentClass?.id ? db.class_students.where('class_id').equals(currentClass.id).toArray() : []),
+    async () => {
+      if (!currentClass?.id) return [];
+      const classIdStr = String(currentClass.id);
+      const all = await db.class_students.toArray();
+      return all.filter((cs) => String(cs.class_id) === classIdStr);
+    },
     [currentClass?.id]
   ) || [];
 
@@ -1135,6 +1147,7 @@ export const UltraFastGradeEntry: React.FC<UltraFastGradeEntryProps> = ({
       updated_at: now,
     }));
 
+    const backupSessions = JSON.parse(JSON.stringify(studentSessions));
     try {
       const updatedSessions = { ...studentSessions };
 
@@ -1176,6 +1189,8 @@ export const UltraFastGradeEntry: React.FC<UltraFastGradeEntryProps> = ({
       // Bulk update IndexedDB
       if (docsToBulkPut.length > 0) {
         await db.student_sessions.bulkPut(docsToBulkPut);
+        // Explicitly sync batch to Firestore for multi-device realtime visibility
+        await pushBatchDocsToFirestore('student_sessions', docsToBulkPut);
       }
 
       setStudentSessions(updatedSessions);
@@ -1206,7 +1221,10 @@ export const UltraFastGradeEntry: React.FC<UltraFastGradeEntryProps> = ({
       });
     } catch (error) {
       console.error('Error saving grades:', error);
+      // Rollback to prior UI state if saving crashes
+      setStudentSessions(backupSessions);
       setSyncStatus('offline');
+      alert('Có lỗi khi lưu dữ liệu. Đã khôi phục lại trạng thái trước khi lưu!');
     }
   };
 

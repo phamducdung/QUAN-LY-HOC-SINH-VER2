@@ -385,26 +385,31 @@ export const StudentRoster: React.FC<StudentRosterProps> = ({
     setTransferFromClassId('');
     setTransferToClassId('');
 
-    // Fetch student sessions
-    const studSessions = await db.student_sessions.where('student_id').equals(st.id!).toArray();
+    // Fetch student sessions with type-safe string comparison
+    const stIdStr = String(st.id);
+    const allStudSessions = await db.student_sessions.toArray();
+    const studSessions = allStudSessions.filter((ss) => String(ss.student_id) === stIdStr);
     setStudentSessionsRaw(studSessions);
 
     // Fetch corresponding session details
-    const sessionIds = studSessions.map(ss => ss.session_id);
-    const sessList = await db.sessions.where('id').anyOf(sessionIds).toArray();
+    const sessionIds = new Set(studSessions.map((ss) => String(ss.session_id)));
+    const allSessions = await db.sessions.toArray();
+    const sessList = allSessions.filter((s) => sessionIds.has(String(s.id)));
     // Sort sessions by date
-    sessList.sort((a, b) => a.session_date.localeCompare(b.session_date));
+    sessList.sort((a, b) => (a.session_date || '').localeCompare(b.session_date || ''));
     setStudentSessionsList(sessList);
 
     // Fetch or load the last saved AI Diagnosis for this student
-    const savedDiag = await db.ai_diagnoses.where('student_id').equals(st.id!).toArray();
+    const allDiags = await db.ai_diagnoses.toArray();
+    const savedDiag = allDiags.filter((d) => String(d.student_id) === stIdStr);
     if (savedDiag.length > 0) {
-      savedDiag.sort((a, b) => (b.id || "").localeCompare(a.id || ""));
+      savedDiag.sort((a, b) => String(b.id || '').localeCompare(String(a.id || '')));
       setAiDiagnosis(savedDiag[0].diagnosis_json);
     }
 
     // Fetch student's warnings
-    const warns = await db.warnings.where('student_id').equals(st.id!).toArray();
+    const allWarns = await db.warnings.toArray();
+    const warns = allWarns.filter((w) => String(w.student_id) === stIdStr);
     setStudentWarnings(warns);
   };
 

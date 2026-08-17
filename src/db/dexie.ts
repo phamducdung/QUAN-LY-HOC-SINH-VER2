@@ -14,16 +14,29 @@ import {
   Settings,
 } from '../types';
 
-import { pushDocToFirestore } from '../services/syncService';
+import { pushDocToFirestore, pushDocsBatchToFirestore, broadcastLocalMutation } from '../services/syncService';
 
 export let isRemoteSyncing = false;
 export function setRemoteSyncing(val: boolean) {
   isRemoteSyncing = val;
 }
 
+export async function pushBatchDocsToFirestore(tableName: string, items: any[]) {
+  if (isRemoteSyncing) return;
+  try {
+    items.forEach(item => {
+      if (item?.id) broadcastLocalMutation(tableName, 'put', item.id);
+    });
+    await pushDocsBatchToFirestore(tableName as any, items);
+  } catch (err) {
+    console.warn(`[Sync] Failed to batch push ${tableName}:`, err);
+  }
+}
+
 export async function pushSingleDocToFirestore(tableName: string, docId: string | number, data: any, isDelete = false) {
   if (isRemoteSyncing) return;
   try {
+    broadcastLocalMutation(tableName, isDelete ? 'delete' : 'put', docId);
     await pushDocToFirestore(tableName as any, String(docId), data, isDelete);
   } catch (err) {
     console.warn(`[Sync] Failed to push ${tableName}/${docId}:`, err);

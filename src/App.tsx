@@ -57,18 +57,6 @@ export default function App() {
   useEffect(() => {
     async function init() {
       try {
-        // Automatic one-time clean wipe of legacy test data for production deployment
-        const hasCleanedForProd = localStorage.getItem('smart_edu_prod_clean_v1');
-        if (!hasCleanedForProd) {
-          try {
-            await clearFirestoreDatabase();
-            await clearAllDataToBlankSlate();
-            localStorage.setItem('smart_edu_prod_clean_v1', 'true');
-          } catch (e) {
-            console.warn('Initial clean slate error:', e);
-          }
-        }
-
         await initializeDefaultSystemData();
       } catch (err) {
         console.error('Dexie system initialization error:', err);
